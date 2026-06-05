@@ -7,6 +7,7 @@ import EmpresaError from '../components/EmpresaError'
 import LoadingScreen from '../components/LoadingScreen'
 import CategoryTabs from '../components/CategoryTabs'
 import ProductCard from '../components/ProductCard'
+import CartBar from '../components/CartBar'
 import type { Producto } from '../types'
 
 // ─── Toast mínimo (se reutilizará en Tarea 5) ────────────────────────────────
@@ -138,7 +139,8 @@ export default function Pedido() {
         )}
       </main>
 
-      {/* ── Tarea 4: CartBar aquí ─────────────────────────────────────────── */}
+      {/* ── CartBar ───────────────────────────────────────────────────────── */}
+      <CartBar />
 
       {/* ── Toast ─────────────────────────────────────────────────────────── */}
       {toast && <Toast message={toast} onDone={() => setToast(null)} />}
