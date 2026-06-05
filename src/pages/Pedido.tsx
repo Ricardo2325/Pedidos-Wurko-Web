@@ -67,12 +67,11 @@ export default function Pedido() {
   // ── Handlers ────────────────────────────────────────────────────────────────
   function handleAdd(producto: Producto) {
     addSimple(producto)
-    setToast(`✅ ${producto.nombre} añadido`)
+    setToast(`${producto.nombre} añadido al pedido`)
   }
 
   function handleMenu(producto: Producto) {
-    // Tarea 6 → modal de menú. Por ahora, aviso.
-    setToast('🍽️ Selección de menú próximamente')
+    setToast('Selección de menú — próximamente')
     void producto
   }
 
@@ -82,18 +81,20 @@ export default function Pedido() {
 
       {/* ── Header sticky ─────────────────────────────────────────────────── */}
       <header className="flex-shrink-0 bg-bg border-b border-border">
-        {/* Top bar: empresa */}
-        <div className="flex items-center justify-between px-4 pt-3 pb-2">
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-widest text-text-muted">
-              {empresa.nombre}
-            </p>
-            <h1 className="text-xl font-extrabold tracking-tight text-text-primary leading-tight">
-              WURKO <span className="text-brand-green">PADEL</span>
-            </h1>
+        {/* Top bar: logo + empresa + envío */}
+        <div className="flex items-center justify-between px-4 pt-3 pb-2 gap-3">
+          {/* Logo Wurko */}
+          <div className="rounded-xl bg-white px-3 py-1.5 shadow shadow-black/10 flex-shrink-0">
+            <img src="/Logo_Wurko.png" alt="Wurko Padel" className="h-9 w-auto" draggable={false} />
           </div>
-          {/* Indicador de envío */}
-          <div className="rounded-xl bg-bg-surface border border-border px-3 py-1.5 text-right">
+
+          {/* Empresa */}
+          <p className="flex-1 text-xs font-semibold text-text-secondary truncate">
+            {empresa.nombre}
+          </p>
+
+          {/* Envío */}
+          <div className="rounded-xl bg-bg-surface border border-border px-3 py-1.5 text-right flex-shrink-0">
             {empresa.envio_gratis ? (
               <span className="text-[10px] font-semibold text-brand-green">Envío gratis</span>
             ) : (
@@ -120,8 +121,8 @@ export default function Pedido() {
       {/* ── Lista de productos ─────────────────────────────────────────────── */}
       <main className="flex-1 overflow-y-auto">
         {productosFiltrados.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-text-muted">
-            <span className="text-4xl mb-3">🍽️</span>
+          <div className="flex flex-col items-center justify-center py-20 text-text-muted gap-3">
+            <div className="h-px w-12 bg-border" />
             <p className="text-sm">No hay productos en esta categoría</p>
           </div>
         ) : (

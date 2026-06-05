@@ -1,19 +1,25 @@
 export default function LoadingScreen() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-bg gap-5">
-      {/* Spinner con colores Wurko */}
-      <div className="relative h-16 w-16">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-bg gap-6">
+      {/* Logo en contenedor blanco */}
+      <div className="rounded-2xl bg-white px-6 py-4 shadow-lg shadow-black/20">
+        <img
+          src="/Logo_Wurko.png"
+          alt="Wurko Padel"
+          className="h-14 w-auto"
+          draggable={false}
+        />
+      </div>
+
+      {/* Spinner Wurko */}
+      <div className="relative h-10 w-10">
         <div className="absolute inset-0 rounded-full border-4 border-bg-elevated" />
         <div className="absolute inset-0 animate-spin rounded-full border-4 border-transparent border-t-brand-green border-r-brand-blue" />
       </div>
 
-      {/* Texto */}
-      <div className="text-center">
-        <p className="font-display text-xl font-extrabold tracking-widest text-text-primary">
-          WURKO <span className="text-brand-green">PADEL</span>
-        </p>
-        <p className="mt-1 text-xs font-medium text-text-muted">Cargando carta…</p>
-      </div>
+      <p className="text-xs font-semibold uppercase tracking-widest text-text-muted">
+        Cargando carta…
+      </p>
     </div>
   )
 }

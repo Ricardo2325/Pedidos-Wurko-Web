@@ -33,7 +33,7 @@ export default function CartBar() {
 
         {/* Texto central */}
         <span className="flex-1 text-center text-sm font-bold tracking-wide text-white">
-          🛒 Ver pedido
+          Ver pedido
         </span>
 
         {/* Total */}

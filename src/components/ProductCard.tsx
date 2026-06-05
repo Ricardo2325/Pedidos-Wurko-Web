@@ -1,27 +1,6 @@
 import { useState } from 'react'
 import type { Producto } from '../types'
 
-// Emoji de fallback por categoría
-const CATEGORY_EMOJI: Record<string, string> = {
-  Bocadillos: '🥖',
-  Desayunos: '🥐',
-  'Menú del Día': '🍽️',
-  Menús: '🍽️',
-  'Medios Menús': '🍱',
-  Tapas: '🫙',
-  Raciones: '🍳',
-  'Bebidas Refrescos': '🥤',
-  Agua: '💧',
-  'Zumos y Batidos': '🥤',
-  Cervezas: '🍺',
-  Vino: '🍷',
-  Cafés: '☕',
-  Infusiones: '🍵',
-  Postres: '🍮',
-  Extras: '➕',
-  'Suplementos Menú': '✨',
-}
-
 const TIPOS_MENU = ['menu_completo', 'medio_menu', 'menu_desayuno', 'menu_desayuno_especial']
 
 interface Props {
@@ -33,14 +12,10 @@ interface Props {
 export default function ProductCard({ producto, onAdd, onMenu }: Props) {
   const [imgError, setImgError] = useState(false)
   const esMenu = TIPOS_MENU.includes(producto.tipo)
-  const emoji = CATEGORY_EMOJI[producto.categoria] ?? '🍽️'
 
   function handleClick() {
-    if (esMenu) {
-      onMenu(producto)
-    } else {
-      onAdd(producto)
-    }
+    if (esMenu) onMenu(producto)
+    else onAdd(producto)
   }
 
   return (
@@ -57,8 +32,14 @@ export default function ProductCard({ producto, onAdd, onMenu }: Props) {
             onError={() => setImgError(true)}
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-brand-blue/10 to-brand-green/10 text-3xl">
-            {emoji}
+          /* Placeholder: logo Wurko al 10% opacidad */
+          <div className="flex h-full w-full items-center justify-center bg-bg-elevated">
+            <img
+              src="/Logo_Wurko.png"
+              alt=""
+              aria-hidden
+              className="w-4/5 opacity-10 grayscale"
+            />
           </div>
         )}
 
@@ -85,7 +66,7 @@ export default function ProductCard({ producto, onAdd, onMenu }: Props) {
         </p>
       </div>
 
-      {/* Botón añadir */}
+      {/* Botón */}
       <button
         onClick={handleClick}
         aria-label={esMenu ? `Ver opciones de ${producto.nombre}` : `Añadir ${producto.nombre}`}
