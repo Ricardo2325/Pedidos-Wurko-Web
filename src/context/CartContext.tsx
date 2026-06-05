@@ -5,6 +5,8 @@ import type { CartItem, CartExtra, Producto } from '../types'
 
 interface CartState {
   items: CartItem[]
+  notaPedido: string
+  horaPedido: string
 }
 
 type Action =
@@ -12,6 +14,8 @@ type Action =
   | { type: 'ADD_ITEM'; item: CartItem }
   | { type: 'UPDATE_QUANTITY'; id: string; delta: number }
   | { type: 'REMOVE_ITEM'; id: string }
+  | { type: 'SET_NOTA'; nota: string }
+  | { type: 'SET_HORA'; hora: string }
   | { type: 'CLEAR' }
 
 interface CartContextType {
@@ -21,6 +25,10 @@ interface CartContextType {
   updateQuantity: (id: string, delta: number) => void
   removeItem: (id: string) => void
   clearCart: () => void
+  notaPedido: string
+  setNotaPedido: (nota: string) => void
+  horaPedido: string
+  setHoraPedido: (hora: string) => void
   total: number
   count: number
 }
@@ -30,6 +38,12 @@ interface CartContextType {
 function itemSubtotal(item: CartItem): number {
   const extrasTotal = item.extras.reduce((s, e: CartExtra) => s + e.precio, 0)
   return (item.producto.precio + extrasTotal) * item.cantidad
+}
+
+const INITIAL_STATE: CartState = {
+  items: [],
+  notaPedido: '',
+  horaPedido: 'Lo antes posible',
 }
 
 function cartReducer(state: CartState, action: Action): CartState {
@@ -45,12 +59,14 @@ function cartReducer(state: CartState, action: Action): CartState {
       )
       if (existing) {
         return {
+          ...state,
           items: state.items.map((i) =>
             i.id === existing.id ? { ...i, cantidad: i.cantidad + 1 } : i,
           ),
         }
       }
       return {
+        ...state,
         items: [
           ...state.items,
           {
@@ -65,10 +81,11 @@ function cartReducer(state: CartState, action: Action): CartState {
     }
 
     case 'ADD_ITEM':
-      return { items: [...state.items, action.item] }
+      return { ...state, items: [...state.items, action.item] }
 
     case 'UPDATE_QUANTITY':
       return {
+        ...state,
         items: state.items
           .map((i) =>
             i.id === action.id ? { ...i, cantidad: i.cantidad + action.delta } : i,
@@ -77,10 +94,16 @@ function cartReducer(state: CartState, action: Action): CartState {
       }
 
     case 'REMOVE_ITEM':
-      return { items: state.items.filter((i) => i.id !== action.id) }
+      return { ...state, items: state.items.filter((i) => i.id !== action.id) }
+
+    case 'SET_NOTA':
+      return { ...state, notaPedido: action.nota }
+
+    case 'SET_HORA':
+      return { ...state, horaPedido: action.hora }
 
     case 'CLEAR':
-      return { items: [] }
+      return INITIAL_STATE
 
     default:
       return state
@@ -92,7 +115,7 @@ function cartReducer(state: CartState, action: Action): CartState {
 const CartContext = createContext<CartContextType | null>(null)
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(cartReducer, { items: [] })
+  const [state, dispatch] = useReducer(cartReducer, INITIAL_STATE)
 
   const total = useMemo(
     () => state.items.reduce((s, i) => s + itemSubtotal(i), 0),
@@ -111,6 +134,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     updateQuantity: (id, delta) => dispatch({ type: 'UPDATE_QUANTITY', id, delta }),
     removeItem: (id) => dispatch({ type: 'REMOVE_ITEM', id }),
     clearCart: () => dispatch({ type: 'CLEAR' }),
+    notaPedido: state.notaPedido,
+    setNotaPedido: (nota) => dispatch({ type: 'SET_NOTA', nota }),
+    horaPedido: state.horaPedido,
+    setHoraPedido: (hora) => dispatch({ type: 'SET_HORA', hora }),
     total,
     count,
   }

@@ -78,7 +78,7 @@ export default function MenuModal({ producto, menuDia, bebidas, cafes, onClose, 
   function handleAdd() {
     if (!producto || !isComplete) return
 
-    // Línea del menú con modificaciones
+    // La bebida del menú se inserta como fila separada en DB (Tarea 9), no como línea en carrito
     addItem({
       id: crypto.randomUUID(),
       producto,
@@ -94,21 +94,6 @@ export default function MenuModal({ producto, menuDia, bebidas, cafes, onClose, 
         cafe: cafe || undefined,
       },
     })
-
-    // Bebida como línea separada para la tablet de barra (precio 0)
-    if (bebida && (tipo === 'menu_completo' || tipo === 'medio_menu')) {
-      const bebidaProducto = bebidas.find((b) => b.nombre === bebida)
-      if (bebidaProducto) {
-        addItem({
-          id: crypto.randomUUID(),
-          producto: { ...bebidaProducto, precio: 0 },
-          cantidad: 1,
-          extras: [],
-          nota: '',
-          menuOpciones: { bebida: `del ${producto.nombre}` },
-        })
-      }
-    }
 
     setPrimero(''); setSegundo(''); setPostre('')
     setPlato(''); setBebida(''); setCafe('')
