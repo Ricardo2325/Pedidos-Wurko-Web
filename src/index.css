@@ -61,3 +61,13 @@ input, select, textarea {
   background: linear-gradient(to top, rgba(13,27,18,0.7) 0%, transparent 50%);
   border-radius: inherit;
 }
+
+/* Bottom sheet modal animation */
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.modal-sheet {
+  animation: slide-up 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
