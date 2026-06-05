@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//mnt/skills/public/frontend-design/**)",
+      "WebFetch(domain:github.com)"
+    ]
+  }
+}
