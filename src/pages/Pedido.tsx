@@ -132,6 +132,12 @@ export default function Pedido() {
     }
   }, [searchOpen])
 
+  // Cargar último pedido (debe ir antes de los guards)
+  useEffect(() => {
+    if (token) setLastOrderItems(getLastOrder(token))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token])
+
   // ── Guards ──────────────────────────────────────────────────────────────
   if (empresaState.status === 'loading' || loadingProductos) return <LoadingScreen />
   if (empresaState.status === 'error') return <EmpresaError message={empresaState.message} />
@@ -163,12 +169,6 @@ export default function Pedido() {
   // }
 
   // ── Handlers ────────────────────────────────────────────────────────────
-  // Cargar último pedido una vez que tenemos el token
-  useEffect(() => {
-    if (token) setLastOrderItems(getLastOrder(token))
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token])
-
   function handleRepeatOrder() {
     if (!lastOrderItems) return
     lastOrderItems.forEach((item) => {
