@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
+import { saveLastOrder } from '../lib/lastOrder'
 import type { CartItem } from '../types'
 
 interface ConfirmacionState {
@@ -22,8 +23,9 @@ export default function Confirmacion() {
   const state = location.state as ConfirmacionState | null
   const { clearCart } = useCart()
 
-  // Limpia el carrito una sola vez al montar (el snapshot ya está en state)
+  // Guarda el pedido para "repetir ayer" y limpia el carrito
   useEffect(() => {
+    if (state?.items && token) saveLastOrder(state.items, token)
     clearCart()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

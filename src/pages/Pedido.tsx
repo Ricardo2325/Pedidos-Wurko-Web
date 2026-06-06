@@ -12,7 +12,9 @@ import CartBar from '../components/CartBar'
 import ExtrasModal from '../components/ExtrasModal'
 import MenuModal from '../components/MenuModal'
 import ProductDetailModal from '../components/ProductDetailModal'
-import type { Producto } from '../types'
+import type { Producto, CartItem } from '../types'
+import { getLastOrder } from '../lib/lastOrder'
+import { useCart } from '../context/CartContext'
 
 const CAT_FAVORITOS = 'Favoritos'
 
@@ -55,6 +57,10 @@ export default function Pedido() {
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const searchInputRef = useRef<HTMLInputElement>(null)
+
+  const [lastOrderItems, setLastOrderItems] = useState<CartItem[] | null>(null)
+  const [lastOrderDismissed, setLastOrderDismissed] = useState(false)
+  const { addItem } = useCart()
 
   // ── Datos derivados ──────────────────────────────────────────────────────
   const categorias = useMemo(() => {
@@ -132,7 +138,45 @@ export default function Pedido() {
 
   const { empresa } = empresaState
 
+  // ── Horario de apertura ─────────────────────────────────────────────────
+  // TEMP: comentado para poder hacer tests fuera de horario
+  // Descomenta este bloque cuando vayas a publicar en producción.
+  //
+  // function estaAbierto() {
+  //   const now = new Date()
+  //   const day = now.getDay()           // 0=Dom, 6=Sab
+  //   const mins = now.getHours() * 60 + now.getMinutes()
+  //   return day >= 1 && day <= 5 && mins >= 8 * 60 && mins < 15 * 60 + 30
+  // }
+  // if (!estaAbierto()) {
+  //   return (
+  //     <div className="flex flex-col items-center justify-center gap-4 bg-bg px-6 text-center" style={{ height: '100dvh' }}>
+  //       <div className="rounded-xl bg-white px-4 py-2 shadow shadow-black/10">
+  //         <img src="/Logo_Wurko.webp" alt="Wurko" className="h-10 w-auto" />
+  //       </div>
+  //       <p className="text-xl font-extrabold text-text-primary">Estamos cerrados</p>
+  //       <p className="text-sm text-text-muted">
+  //         Podés hacer tu pedido de lunes a viernes de 8:00 a 15:30
+  //       </p>
+  //     </div>
+  //   )
+  // }
+
   // ── Handlers ────────────────────────────────────────────────────────────
+  // Cargar último pedido una vez que tenemos el token
+  useEffect(() => {
+    if (token) setLastOrderItems(getLastOrder(token))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token])
+
+  function handleRepeatOrder() {
+    if (!lastOrderItems) return
+    lastOrderItems.forEach((item) => {
+      addItem({ ...item, id: crypto.randomUUID() })
+    })
+    setLastOrderDismissed(true)
+  }
+
   function openSearch() {
     setSearchOpen(true)
   }
@@ -303,6 +347,31 @@ export default function Pedido() {
           </ul>
         )}
       </main>
+
+      {/* Banner repetir pedido anterior */}
+      {lastOrderItems && !lastOrderDismissed && (
+        <div className="flex-shrink-0 border-t border-border bg-bg-surface px-4 py-3 flex items-center gap-3">
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-bold text-text-primary">¿Repetís lo de ayer?</p>
+            <p className="text-xs text-text-muted truncate">
+              {lastOrderItems.map((i) => `${i.producto.nombre}${i.cantidad > 1 ? ` ×${i.cantidad}` : ''}`).join(', ')}
+            </p>
+          </div>
+          <button
+            onClick={handleRepeatOrder}
+            className="flex-shrink-0 rounded-xl bg-brand-green px-3 py-2 text-xs font-bold text-bg"
+          >
+            Añadir
+          </button>
+          <button
+            onClick={() => setLastOrderDismissed(true)}
+            aria-label="Cerrar"
+            className="flex-shrink-0 text-text-muted text-lg leading-none"
+          >
+            ×
+          </button>
+        </div>
+      )}
 
       <CartBar />
 
