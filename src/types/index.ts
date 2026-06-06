@@ -17,6 +17,7 @@ export interface Producto {
   foto_url: string | null
   tipo: 'normal' | 'menu_completo' | 'medio_menu' | 'menu_desayuno' | 'menu_desayuno_especial'
   orden: number
+  alergenos: string[] | null
 }
 
 export interface MenuDia {

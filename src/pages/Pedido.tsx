@@ -11,6 +11,7 @@ import ProductCard from '../components/ProductCard'
 import CartBar from '../components/CartBar'
 import ExtrasModal from '../components/ExtrasModal'
 import MenuModal from '../components/MenuModal'
+import ProductDetailModal from '../components/ProductDetailModal'
 import type { Producto } from '../types'
 
 const CAT_FAVORITOS = 'Favoritos'
@@ -46,6 +47,7 @@ export default function Pedido() {
 
   const [activeCategory, setActiveCategory] = useState<string>('')
   const [toast, setToast] = useState<string | null>(null)
+  const [detalleProducto, setDetalleProducto] = useState<Producto | null>(null)
   const [extrasProducto, setExtrasProducto] = useState<Producto | null>(null)
   const [menuProducto, setMenuProducto] = useState<Producto | null>(null)
 
@@ -140,11 +142,25 @@ export default function Pedido() {
     setSearchOpen(false)
   }
 
+  function handleDetail(producto: Producto) {
+    setDetalleProducto(producto)
+  }
+
   function handleAdd(producto: Producto) {
     setExtrasProducto(producto)
   }
 
   function handleMenu(producto: Producto) {
+    setMenuProducto(producto)
+  }
+
+  function handleDetailAdd(producto: Producto) {
+    setDetalleProducto(null)
+    setExtrasProducto(producto)
+  }
+
+  function handleDetailMenu(producto: Producto) {
+    setDetalleProducto(null)
     setMenuProducto(producto)
   }
 
@@ -279,6 +295,7 @@ export default function Pedido() {
                   producto={producto}
                   onAdd={handleAdd}
                   onMenu={handleMenu}
+                  onDetail={handleDetail}
                   isFavorito={isFavorito(producto.id)}
                   onToggleFavorito={toggleFavorito}
                 />
@@ -293,6 +310,13 @@ export default function Pedido() {
       {toast && <Toast message={toast} onDone={() => setToast(null)} />}
 
       {/* ── Modales ─────────────────────────────────────────────────────── */}
+      <ProductDetailModal
+        producto={detalleProducto}
+        onClose={() => setDetalleProducto(null)}
+        onAdd={handleDetailAdd}
+        onMenu={handleDetailMenu}
+      />
+
       <ExtrasModal
         producto={extrasProducto}
         extras={extras}

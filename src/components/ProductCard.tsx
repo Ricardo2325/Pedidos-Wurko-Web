@@ -7,15 +7,17 @@ interface Props {
   producto: Producto
   onAdd: (producto: Producto) => void
   onMenu: (producto: Producto) => void
+  onDetail?: (producto: Producto) => void
   isFavorito?: boolean
   onToggleFavorito?: (id: string) => void
 }
 
-export default function ProductCard({ producto, onAdd, onMenu, isFavorito, onToggleFavorito }: Props) {
+export default function ProductCard({ producto, onAdd, onMenu, onDetail, isFavorito, onToggleFavorito }: Props) {
   const [imgError, setImgError] = useState(false)
   const esMenu = TIPOS_MENU.includes(producto.tipo)
 
-  function handleClick() {
+  function handleClick(e: React.MouseEvent) {
+    e.stopPropagation()
     if (esMenu) onMenu(producto)
     else onAdd(producto)
   }
@@ -26,7 +28,10 @@ export default function ProductCard({ producto, onAdd, onMenu, isFavorito, onTog
   }
 
   return (
-    <div className="flex items-center gap-3 rounded-2xl bg-bg-surface border border-border/60 p-3 active:scale-[0.98] transition-transform duration-100">
+    <div
+      className="flex items-center gap-3 rounded-2xl bg-bg-surface border border-border/60 p-3 active:scale-[0.98] transition-transform duration-100 cursor-pointer"
+      onClick={() => onDetail?.(producto)}
+    >
       {/* Imagen */}
       <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-bg-elevated">
         {producto.foto_url && !imgError ? (
@@ -97,7 +102,7 @@ export default function ProductCard({ producto, onAdd, onMenu, isFavorito, onTog
 
       {/* Botón añadir / elegir */}
       <button
-        onClick={handleClick}
+        onClick={(e) => handleClick(e)}
         aria-label={esMenu ? `Ver opciones de ${producto.nombre}` : `Añadir ${producto.nombre}`}
         className={[
           'flex-shrink-0 rounded-xl font-bold transition-all duration-150 active:scale-90',

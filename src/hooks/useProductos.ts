@@ -21,7 +21,7 @@ export function useProductos(): UseProductosResult {
 
     supabase
       .from('productos')
-      .select('id, nombre, categoria, precio, activo, descripcion, foto_url, tipo, orden')
+      .select('id, nombre, categoria, precio, activo, descripcion, foto_url, tipo, orden, alergenos')
       .eq('activo', true)
       .order('orden', { ascending: true })
       .then(({ data, error: sbError }) => {
