@@ -27,8 +27,6 @@ export function getLastOrder(empresaToken: string): CartItem[] | null {
     const raw = localStorage.getItem(LS_KEY)
     if (!raw) return null
     const data: LastOrder = JSON.parse(raw)
-    const today = new Date().toISOString().slice(0, 10)
-    if (data.date === today) return null
     if (data.empresaToken !== empresaToken) return null
     return data.items.length > 0 ? data.items : null
   } catch {
