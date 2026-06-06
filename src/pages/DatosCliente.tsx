@@ -166,11 +166,10 @@ export default function DatosCliente() {
           </div>
 
           {/* Checkbox recordar */}
-          <label className="flex cursor-pointer items-center gap-3">
+          <label className={['flex items-center gap-3', isSubmitting ? 'cursor-default opacity-60' : 'cursor-pointer'].join(' ')}>
             <div
-              onClick={() => !isSubmitting && setRecordar((r) => !r)}
               className={[
-                'flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-colors',
+                'pointer-events-none flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-colors',
                 recordar ? 'border-brand-blue bg-brand-blue' : 'border-border',
               ].join(' ')}
             >
@@ -184,6 +183,7 @@ export default function DatosCliente() {
               type="checkbox"
               className="sr-only"
               checked={recordar}
+              disabled={isSubmitting}
               onChange={() => setRecordar((r) => !r)}
               aria-label="Recordar mis datos"
             />

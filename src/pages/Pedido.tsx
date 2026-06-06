@@ -233,18 +233,6 @@ export default function Pedido() {
                 <path fillRule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clipRule="evenodd" />
               </svg>
             </button>
-            <div className="flex-shrink-0 rounded-xl border border-border bg-bg-surface px-3 py-1.5 text-right">
-              {empresa.envio_gratis ? (
-                <span className="text-[10px] font-semibold text-brand-green">Envío gratis</span>
-              ) : (
-                <>
-                  <p className="text-[9px] leading-none text-text-muted">Envío</p>
-                  <p className="text-xs font-bold text-text-secondary">
-                    {empresa.coste_envio.toFixed(2)}€
-                  </p>
-                </>
-              )}
-            </div>
           </div>
         )}
 

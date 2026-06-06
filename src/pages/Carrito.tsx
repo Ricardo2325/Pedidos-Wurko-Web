@@ -224,20 +224,8 @@ export default function Carrito() {
         className="fixed bottom-0 left-0 right-0 border-t border-border bg-bg-surface px-5 py-4"
         style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}
       >
-        {/* Subtotales */}
-        <div className="mb-1 flex justify-between text-sm">
-          <span className="text-text-muted">Subtotal</span>
-          <span className="text-text-secondary">{total.toFixed(2)}€</span>
-        </div>
-        <div className="mb-3 flex justify-between text-sm">
-          <span className="text-text-muted">Envío</span>
-          <span className={empresa.envio_gratis ? 'font-semibold text-brand-green' : 'text-text-secondary'}>
-            {empresa.envio_gratis ? 'Gratis' : `${costoEnvio.toFixed(2)}€`}
-          </span>
-        </div>
-
         {/* Total */}
-        <div className="mb-4 flex items-baseline justify-between border-t border-border pt-3">
+        <div className="mb-4 flex items-baseline justify-between">
           <span className="text-base font-bold text-text-primary">TOTAL</span>
           <span className="text-2xl font-extrabold text-brand-green">
             {totalFinal.toFixed(2)}€
