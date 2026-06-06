@@ -227,7 +227,7 @@ export default function Pedido() {
         ) : (
           <div className="flex items-center justify-between gap-3 px-4 pb-2 pt-3">
             <div className="flex-shrink-0 rounded-xl bg-white px-3 py-1.5 shadow shadow-black/10">
-              <img src="/Logo_Wurko.png" alt="Wurko Padel" className="h-9 w-auto" draggable={false} />
+              <img src="/Logo_Wurko.webp" alt="Wurko Padel" className="h-9 w-auto" draggable={false} />
             </div>
             {!empresa.mostrar_nombre && (
               <p className="flex-1 truncate text-xs font-semibold text-text-secondary">

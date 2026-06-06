@@ -74,7 +74,7 @@ export default function ProductDetailModal({ producto, onClose, onAdd, onMenu }:
             ) : (
               <div className="flex h-full w-full items-center justify-center">
                 <img
-                  src="/Logo_Wurko.png"
+                  src="/Logo_Wurko.webp"
                   alt=""
                   aria-hidden
                   className="w-1/3 opacity-10 grayscale"

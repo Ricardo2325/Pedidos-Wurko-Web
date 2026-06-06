@@ -46,7 +46,7 @@ export default function ProductCard({ producto, onAdd, onMenu, onDetail, isFavor
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-bg-elevated">
             <img
-              src="/Logo_Wurko.png"
+              src="/Logo_Wurko.webp"
               alt=""
               aria-hidden
               className="w-4/5 opacity-10 grayscale"

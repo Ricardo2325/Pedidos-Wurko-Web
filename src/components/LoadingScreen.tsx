@@ -4,7 +4,7 @@ export default function LoadingScreen() {
       {/* Logo en contenedor blanco */}
       <div className="rounded-2xl bg-white px-6 py-4 shadow-lg shadow-black/20">
         <img
-          src="/Logo_Wurko.png"
+          src="/Logo_Wurko.webp"
           alt="Wurko Padel"
           className="h-14 w-auto"
           draggable={false}

@@ -42,7 +42,7 @@ export default function Confirmacion() {
       {/* ── Header ────────────────────────────────────────────────────── */}
       <header className="flex shrink-0 items-center justify-center border-b border-border px-4 py-4">
         <div className="rounded-xl bg-white px-4 py-2 shadow shadow-black/10">
-          <img src="/Logo_Wurko.png" alt="Wurko Padel" className="h-8 w-auto" draggable={false} />
+          <img src="/Logo_Wurko.webp" alt="Wurko Padel" className="h-8 w-auto" draggable={false} />
         </div>
       </header>
 

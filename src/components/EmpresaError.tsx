@@ -7,7 +7,7 @@ export default function EmpresaError({ message }: Props) {
     <div className="flex min-h-screen flex-col items-center justify-center bg-bg px-6">
       {/* Logo */}
       <div className="mb-8 rounded-2xl bg-white px-6 py-4 shadow-lg shadow-black/20">
-        <img src="/Logo_Wurko.png" alt="Wurko Padel" className="h-14 w-auto" draggable={false} />
+        <img src="/Logo_Wurko.webp" alt="Wurko Padel" className="h-14 w-auto" draggable={false} />
       </div>
 
       {/* Icono error — sin emoji, SVG inline */}
