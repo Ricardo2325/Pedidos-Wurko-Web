@@ -7,15 +7,22 @@ interface Props {
   producto: Producto
   onAdd: (producto: Producto) => void
   onMenu: (producto: Producto) => void
+  isFavorito?: boolean
+  onToggleFavorito?: (id: string) => void
 }
 
-export default function ProductCard({ producto, onAdd, onMenu }: Props) {
+export default function ProductCard({ producto, onAdd, onMenu, isFavorito, onToggleFavorito }: Props) {
   const [imgError, setImgError] = useState(false)
   const esMenu = TIPOS_MENU.includes(producto.tipo)
 
   function handleClick() {
     if (esMenu) onMenu(producto)
     else onAdd(producto)
+  }
+
+  function handleFavorito(e: React.MouseEvent) {
+    e.stopPropagation()
+    onToggleFavorito?.(producto.id)
   }
 
   return (
@@ -32,7 +39,6 @@ export default function ProductCard({ producto, onAdd, onMenu }: Props) {
             onError={() => setImgError(true)}
           />
         ) : (
-          /* Placeholder: logo Wurko al 10% opacidad */
           <div className="flex h-full w-full items-center justify-center bg-bg-elevated">
             <img
               src="/Logo_Wurko.png"
@@ -48,6 +54,29 @@ export default function ProductCard({ producto, onAdd, onMenu }: Props) {
           <span className="absolute bottom-0 left-0 right-0 bg-brand-blue/80 text-center text-[9px] font-bold uppercase tracking-widest text-white py-0.5">
             Menú
           </span>
+        )}
+
+        {/* Botón favorito */}
+        {onToggleFavorito !== undefined && (
+          <button
+            onClick={handleFavorito}
+            aria-label={isFavorito ? 'Quitar de favoritos' : 'Guardar en favoritos'}
+            className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-bg/75 backdrop-blur-sm transition-transform duration-100 active:scale-90"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              className={`h-3.5 w-3.5 transition-colors duration-150 ${isFavorito ? 'text-red-400' : 'text-text-muted'}`}
+              fill={isFavorito ? 'currentColor' : 'none'}
+              stroke="currentColor"
+              strokeWidth={isFavorito ? 0 : 1.8}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"
+              />
+            </svg>
+          </button>
         )}
       </div>
 
@@ -66,7 +95,7 @@ export default function ProductCard({ producto, onAdd, onMenu }: Props) {
         </p>
       </div>
 
-      {/* Botón */}
+      {/* Botón añadir / elegir */}
       <button
         onClick={handleClick}
         aria-label={esMenu ? `Ver opciones de ${producto.nombre}` : `Añadir ${producto.nombre}`}

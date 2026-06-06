@@ -5,6 +5,7 @@ import Carrito from './pages/Carrito'
 import DatosCliente from './pages/DatosCliente'
 import Confirmacion from './pages/Confirmacion'
 import NotFound from './pages/NotFound'
+import InstallBanner from './components/InstallBanner'
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
           <Route path="/" element={<Navigate to="/pedido" replace />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
+        <InstallBanner />
       </BrowserRouter>
     </CartProvider>
   )

@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
+import { useEmpresa } from '../hooks/useEmpresa'
+import { insertPedido } from '../lib/insertPedido'
+import LoadingScreen from '../components/LoadingScreen'
+import EmpresaError from '../components/EmpresaError'
 
 const LS_KEY = 'wurko_cliente'
 
@@ -13,14 +17,17 @@ export default function DatosCliente() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const token = searchParams.get('empresa')
-  const { items } = useCart()
+
+  const empresaState = useEmpresa(token)
+  const { items, total, notaPedido, horaPedido } = useCart()
 
   const [nombre, setNombre] = useState('')
   const [telefono, setTelefono] = useState('')
   const [recordar, setRecordar] = useState(false)
   const [error, setError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
 
-  // Pre-rellenar desde localStorage si hay datos guardados
   useEffect(() => {
     try {
       const raw = localStorage.getItem(LS_KEY)
@@ -30,37 +37,68 @@ export default function DatosCliente() {
         setTelefono(saved.telefono ?? '')
         setRecordar(true)
       }
-    } catch {
-      // localStorage no disponible o JSON inválido
-    }
+    } catch { /* sin acceso a localStorage */ }
   }, [])
 
-  // Redirigir si llegan sin productos
   useEffect(() => {
     if (items.length === 0) navigate(`/pedido?empresa=${token}`, { replace: true })
   }, [items.length, navigate, token])
 
-  function handleSubmit() {
+  if (empresaState.status === 'loading') return <LoadingScreen />
+  if (empresaState.status === 'error') return <EmpresaError message={empresaState.message} />
+
+  const { empresa } = empresaState
+  const costoEnvio = empresa.envio_gratis ? 0 : empresa.coste_envio
+  const totalFinal = total + costoEnvio
+
+  async function handleSubmit() {
     const nombreTrimmed = nombre.trim()
     if (!nombreTrimmed) {
       setError('El nombre es obligatorio')
       return
     }
     setError('')
+    setSubmitError('')
 
     if (recordar) {
       try {
         localStorage.setItem(LS_KEY, JSON.stringify({ nombre: nombreTrimmed, telefono: telefono.trim() }))
       } catch { /* sin acceso a localStorage */ }
     } else {
-      try {
-        localStorage.removeItem(LS_KEY)
-      } catch { /* sin acceso a localStorage */ }
+      try { localStorage.removeItem(LS_KEY) } catch { /* sin acceso a localStorage */ }
     }
 
-    navigate(`/confirmacion?empresa=${token}`, {
-      state: { nombre: nombreTrimmed, telefono: telefono.trim() },
-    })
+    setIsSubmitting(true)
+    try {
+      const codigoPedido = await insertPedido({
+        empresa_id: empresa.id,
+        empresa_nombre: empresa.nombre,
+        items: [...items],
+        notaPedido,
+        horaPedido,
+        total: totalFinal,
+        coste_envio: costoEnvio,
+        cliente_nombre: nombreTrimmed,
+        cliente_telefono: telefono.trim(),
+      })
+
+      navigate(`/confirmacion?empresa=${token}`, {
+        state: {
+          nombre: nombreTrimmed,
+          codigoPedido,
+          items: [...items],
+          subtotal: total,
+          costoEnvio,
+          totalFinal,
+          horaPedido,
+          empresaNombre: empresa.nombre,
+        },
+      })
+    } catch (err) {
+      console.error('[Wurko] Error al insertar pedido:', err)
+      setSubmitError('No se pudo enviar el pedido. Comprueba tu conexión e inténtalo de nuevo.')
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -70,7 +108,8 @@ export default function DatosCliente() {
       <header className="flex shrink-0 items-center gap-3 border-b border-border px-4 py-4">
         <button
           onClick={() => navigate(-1)}
-          className="flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-bg-surface text-text-secondary"
+          disabled={isSubmitting}
+          className="flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-bg-surface text-text-secondary disabled:opacity-40"
           aria-label="Volver"
         >
           <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5">
@@ -101,7 +140,8 @@ export default function DatosCliente() {
               onChange={(e) => { setNombre(e.target.value); setError('') }}
               placeholder="Tu nombre o apodo"
               autoComplete="given-name"
-              className="w-full rounded-xl border border-border bg-bg-surface px-4 py-3 text-base text-text-primary placeholder:text-text-muted focus:border-brand-blue focus:outline-none"
+              disabled={isSubmitting}
+              className="w-full rounded-xl border border-border bg-bg-surface px-4 py-3 text-base text-text-primary placeholder:text-text-muted focus:border-brand-blue focus:outline-none disabled:opacity-60"
             />
             {error && (
               <p className="mt-1.5 text-xs font-medium text-red-400">{error}</p>
@@ -120,14 +160,15 @@ export default function DatosCliente() {
               placeholder="666 123 456"
               autoComplete="tel"
               inputMode="tel"
-              className="w-full rounded-xl border border-border bg-bg-surface px-4 py-3 text-base text-text-primary placeholder:text-text-muted focus:border-brand-blue focus:outline-none"
+              disabled={isSubmitting}
+              className="w-full rounded-xl border border-border bg-bg-surface px-4 py-3 text-base text-text-primary placeholder:text-text-muted focus:border-brand-blue focus:outline-none disabled:opacity-60"
             />
           </div>
 
           {/* Checkbox recordar */}
           <label className="flex cursor-pointer items-center gap-3">
             <div
-              onClick={() => setRecordar((r) => !r)}
+              onClick={() => !isSubmitting && setRecordar((r) => !r)}
               className={[
                 'flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-colors',
                 recordar ? 'border-brand-blue bg-brand-blue' : 'border-border',
@@ -149,6 +190,13 @@ export default function DatosCliente() {
             <span className="text-sm text-text-secondary">Recordar mis datos en este dispositivo</span>
           </label>
 
+          {/* Error de envío */}
+          {submitError && (
+            <div className="rounded-xl border border-red-400/30 bg-red-400/10 px-4 py-3">
+              <p className="text-sm font-medium text-red-400">{submitError}</p>
+            </div>
+          )}
+
         </div>
       </main>
 
@@ -157,11 +205,28 @@ export default function DatosCliente() {
         className="fixed bottom-0 left-0 right-0 border-t border-border bg-bg-surface px-5 py-4"
         style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}
       >
+        {/* Total */}
+        <div className="mb-3 flex items-baseline justify-between">
+          <span className="text-sm text-text-muted">Total del pedido</span>
+          <span className="text-lg font-extrabold text-brand-green">{totalFinal.toFixed(2)}€</span>
+        </div>
+
         <button
           onClick={handleSubmit}
-          className="w-full rounded-2xl bg-brand-green py-4 text-sm font-bold text-bg shadow-lg shadow-brand-green/30 active:scale-[0.98] transition-transform duration-100"
+          disabled={isSubmitting}
+          className="w-full rounded-2xl bg-brand-green py-4 text-sm font-bold text-bg shadow-lg shadow-brand-green/30 active:scale-[0.98] transition-all duration-100 disabled:opacity-60 disabled:scale-100"
         >
-          Realizar pedido →
+          {isSubmitting ? (
+            <span className="flex items-center justify-center gap-2">
+              <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              Enviando pedido...
+            </span>
+          ) : (
+            'Realizar pedido →'
+          )}
         </button>
       </div>
     </div>
