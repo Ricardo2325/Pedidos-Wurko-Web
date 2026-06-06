@@ -9,6 +9,32 @@ interface UseProductosResult {
 }
 
 const TIPOS_DESAYUNO = ['menu_desayuno', 'menu_desayuno_especial'] as const
+const CACHE_KEY = 'wurko_productos_v1'
+const CACHE_TTL = 5 * 60 * 1000 // 5 minutos
+
+function getCache(): Producto[] | null {
+  try {
+    const raw = sessionStorage.getItem(CACHE_KEY)
+    if (!raw) return null
+    const { data, ts } = JSON.parse(raw)
+    if (Date.now() - ts > CACHE_TTL) return null
+    return data as Producto[]
+  } catch { return null }
+}
+
+function setCache(data: Producto[]) {
+  try {
+    sessionStorage.setItem(CACHE_KEY, JSON.stringify({ data, ts: Date.now() }))
+  } catch {}
+}
+
+function filtrarProductos(data: Producto[]): Producto[] {
+  const esDesayunoVisible = new Date().getHours() < 11
+  return data.filter((p) => {
+    if (!esDesayunoVisible && TIPOS_DESAYUNO.includes(p.tipo as typeof TIPOS_DESAYUNO[number])) return false
+    return true
+  })
+}
 
 export function useProductos(): UseProductosResult {
   const [productos, setProductos] = useState<Producto[]>([])
@@ -16,8 +42,12 @@ export function useProductos(): UseProductosResult {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const horaActual = new Date().getHours()
-    const esDesayunoVisible = horaActual < 11
+    const cached = getCache()
+    if (cached) {
+      setProductos(filtrarProductos(cached))
+      setLoading(false)
+      return
+    }
 
     supabase
       .from('productos')
@@ -30,16 +60,9 @@ export function useProductos(): UseProductosResult {
           setLoading(false)
           return
         }
-
-        const items = (data as Producto[]).filter((p) => {
-          // Ocultar menús desayuno si ya son las 11:00 o más
-          if (!esDesayunoVisible && TIPOS_DESAYUNO.includes(p.tipo as typeof TIPOS_DESAYUNO[number])) {
-            return false
-          }
-          return true
-        })
-
-        setProductos(items)
+        const raw = data as Producto[]
+        setCache(raw)
+        setProductos(filtrarProductos(raw))
         setLoading(false)
       })
   }, [])
