@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, useMemo, type ReactNode } from 'react'
+import { createContext, useContext, useReducer, useMemo, useEffect, type ReactNode } from 'react'
 import type { CartItem, CartExtra, Producto } from '../types'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -44,6 +44,24 @@ const INITIAL_STATE: CartState = {
   items: [],
   notaPedido: '',
   horaPedido: 'Lo antes posible',
+}
+
+const LS_KEY = 'wurko_cart'
+
+function loadFromStorage(): CartState {
+  try {
+    const raw = localStorage.getItem(LS_KEY)
+    if (!raw) return INITIAL_STATE
+    const parsed = JSON.parse(raw)
+    if (!Array.isArray(parsed.items)) return INITIAL_STATE
+    return {
+      items: parsed.items,
+      notaPedido: typeof parsed.notaPedido === 'string' ? parsed.notaPedido : '',
+      horaPedido: typeof parsed.horaPedido === 'string' ? parsed.horaPedido : 'Lo antes posible',
+    }
+  } catch {
+    return INITIAL_STATE
+  }
 }
 
 function cartReducer(state: CartState, action: Action): CartState {
@@ -115,7 +133,17 @@ function cartReducer(state: CartState, action: Action): CartState {
 const CartContext = createContext<CartContextType | null>(null)
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(cartReducer, INITIAL_STATE)
+  const [state, dispatch] = useReducer(cartReducer, INITIAL_STATE, loadFromStorage)
+
+  useEffect(() => {
+    try {
+      if (state.items.length === 0 && !state.notaPedido) {
+        localStorage.removeItem(LS_KEY)
+      } else {
+        localStorage.setItem(LS_KEY, JSON.stringify(state))
+      }
+    } catch { /* sin acceso a localStorage */ }
+  }, [state])
 
   const total = useMemo(
     () => state.items.reduce((s, i) => s + itemSubtotal(i), 0),

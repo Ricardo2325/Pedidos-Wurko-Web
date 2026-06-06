@@ -8,13 +8,25 @@ import type { CartItem } from '../types'
 // ─── Franjas horarias ────────────────────────────────────────────────────────
 
 const HORA_SLOTS = (() => {
-  const slots = ['Lo antes posible']
-  for (let h = 13; h <= 16; h++) {
-    for (let m = 0; m < 60; m += 15) {
-      if (h === 16 && m > 0) break
-      slots.push(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`)
+  const now = new Date()
+  const hAct = now.getHours()
+  const mAct = now.getMinutes()
+  const nowMin = hAct * 60 + mAct
+  const slots: string[] = ['Lo antes posible']
+
+  const addRange = (fromH: number, toH: number) => {
+    for (let h = fromH; h <= toH; h++) {
+      for (let m = 0; m < 60; m += 15) {
+        if (h === toH && m > 0) break
+        if (h * 60 + m < nowMin) continue
+        slots.push(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`)
+      }
     }
   }
+
+  if (hAct < 11) addRange(8, 11)
+  addRange(13, 16)
+
   return slots
 })()
 

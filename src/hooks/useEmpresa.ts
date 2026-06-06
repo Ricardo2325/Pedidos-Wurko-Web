@@ -47,7 +47,6 @@ export function useEmpresa(token: string | null): EmpresaState {
           return
         }
 
-        console.log('[Wurko] Empresa cargada:', empresa.nombre, '| Envío:', empresa.coste_envio)
         setState({ status: 'ok', empresa })
       })
 

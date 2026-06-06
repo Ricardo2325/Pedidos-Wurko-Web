@@ -131,19 +131,9 @@ export default function Confirmacion() {
               })}
             </div>
 
-            {/* Totales */}
-            <div className="border-t border-border px-4 py-3 space-y-1">
-              <div className="flex justify-between text-sm">
-                <span className="text-text-muted">Subtotal</span>
-                <span className="text-text-secondary">{subtotal.toFixed(2)}€</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-text-muted">Envío</span>
-                <span className={costoEnvio === 0 ? 'font-semibold text-brand-green' : 'text-text-secondary'}>
-                  {costoEnvio === 0 ? 'Gratis' : `${costoEnvio.toFixed(2)}€`}
-                </span>
-              </div>
-              <div className="flex items-baseline justify-between border-t border-border pt-2 mt-2">
+            {/* Total */}
+            <div className="border-t border-border px-4 py-3">
+              <div className="flex items-baseline justify-between">
                 <span className="text-sm font-bold text-text-primary">TOTAL</span>
                 <span className="text-xl font-extrabold text-brand-green">{totalFinal.toFixed(2)}€</span>
               </div>
