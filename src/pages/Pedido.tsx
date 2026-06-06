@@ -162,7 +162,7 @@ export default function Pedido() {
   //       </div>
   //       <p className="text-xl font-extrabold text-text-primary">Estamos cerrados</p>
   //       <p className="text-sm text-text-muted">
-  //         Podés hacer tu pedido de lunes a viernes de 8:00 a 15:30
+  //         Puedes hacer tu pedido de lunes a viernes de 8:00 a 15:30
   //       </p>
   //     </div>
   //   )
@@ -318,8 +318,8 @@ export default function Pedido() {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="h-10 w-10 opacity-30">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                 </svg>
-                <p className="text-sm">Todavía no tenés favoritos</p>
-                <p className="text-xs">Tocá el corazón en cualquier producto</p>
+                <p className="text-sm">Todavía no tienes favoritos</p>
+                <p className="text-xs">Toca el corazón en cualquier producto</p>
               </>
             ) : (
               <>
@@ -359,7 +359,7 @@ export default function Pedido() {
           <div className="relative w-full rounded-t-3xl bg-bg-surface border-t border-border px-5 pt-5 pb-8 flex flex-col gap-4">
             <div className="flex items-start justify-between gap-3">
               <h2 className="font-display text-xl font-extrabold tracking-tight text-text-primary leading-tight">
-                ¿Querés pedir<br />lo mismo que la última vez?
+                ¿Quieres pedir<br />lo mismo que la última vez?
               </h2>
               <button
                 onClick={() => setLastOrderDismissed(true)}
