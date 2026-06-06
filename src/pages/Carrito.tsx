@@ -8,17 +8,13 @@ import type { CartItem } from '../types'
 // ─── Franjas horarias ────────────────────────────────────────────────────────
 
 const HORA_SLOTS = (() => {
-  const now = new Date()
-  const hAct = now.getHours()
-  const mAct = now.getMinutes()
-  const nowMin = hAct * 60 + mAct
+  const hAct = new Date().getHours()
   const slots: string[] = ['Lo antes posible']
 
   const addRange = (fromH: number, toH: number) => {
     for (let h = fromH; h <= toH; h++) {
       for (let m = 0; m < 60; m += 15) {
         if (h === toH && m > 0) break
-        if (h * 60 + m < nowMin) continue
         slots.push(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`)
       }
     }
@@ -119,9 +115,6 @@ export default function Carrito() {
   if (empresaState.status === 'loading') return <LoadingScreen />
   if (empresaState.status === 'error') return <EmpresaError message={empresaState.message} />
 
-  const { empresa } = empresaState
-  const costoEnvio = empresa.envio_gratis ? 0 : empresa.coste_envio
-  const totalFinal = total + costoEnvio
 
   // Carrito vacío
   if (items.length === 0) {
@@ -240,7 +233,7 @@ export default function Carrito() {
         <div className="mb-4 flex items-baseline justify-between">
           <span className="text-base font-bold text-text-primary">TOTAL</span>
           <span className="text-2xl font-extrabold text-brand-green">
-            {totalFinal.toFixed(2)}€
+            {total.toFixed(2)}€
           </span>
         </div>
 

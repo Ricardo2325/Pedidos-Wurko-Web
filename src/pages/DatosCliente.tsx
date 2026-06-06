@@ -48,8 +48,6 @@ export default function DatosCliente() {
   if (empresaState.status === 'error') return <EmpresaError message={empresaState.message} />
 
   const { empresa } = empresaState
-  const costoEnvio = empresa.envio_gratis ? 0 : empresa.coste_envio
-  const totalFinal = total + costoEnvio
 
   async function handleSubmit() {
     const nombreTrimmed = nombre.trim()
@@ -76,8 +74,8 @@ export default function DatosCliente() {
         items: [...items],
         notaPedido,
         horaPedido,
-        total: totalFinal,
-        coste_envio: costoEnvio,
+        total,
+        coste_envio: 0,
         cliente_nombre: nombreTrimmed,
         cliente_telefono: telefono.trim(),
       })
@@ -88,8 +86,8 @@ export default function DatosCliente() {
           codigoPedido,
           items: [...items],
           subtotal: total,
-          costoEnvio,
-          totalFinal,
+          costoEnvio: 0,
+          totalFinal: total,
           horaPedido,
           empresaNombre: empresa.nombre,
         },
@@ -208,7 +206,7 @@ export default function DatosCliente() {
         {/* Total */}
         <div className="mb-3 flex items-baseline justify-between">
           <span className="text-sm text-text-muted">Total del pedido</span>
-          <span className="text-lg font-extrabold text-brand-green">{totalFinal.toFixed(2)}€</span>
+          <span className="text-lg font-extrabold text-brand-green">{total.toFixed(2)}€</span>
         </div>
 
         <button
