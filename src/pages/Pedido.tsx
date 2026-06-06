@@ -348,28 +348,49 @@ export default function Pedido() {
         )}
       </main>
 
-      {/* Banner repetir pedido anterior */}
+      {/* Modal repetir pedido anterior */}
       {lastOrderItems && !lastOrderDismissed && (
-        <div className="flex-shrink-0 border-t border-border bg-bg-surface px-4 py-3 flex items-center gap-3">
-          <div className="flex-1 min-w-0">
-            <p className="text-xs font-bold text-text-primary">¿Repetís lo de ayer?</p>
-            <p className="text-xs text-text-muted truncate">
-              {lastOrderItems.map((i) => `${i.producto.nombre}${i.cantidad > 1 ? ` ×${i.cantidad}` : ''}`).join(', ')}
-            </p>
-          </div>
-          <button
-            onClick={handleRepeatOrder}
-            className="flex-shrink-0 rounded-xl bg-brand-green px-3 py-2 text-xs font-bold text-bg"
-          >
-            Añadir
-          </button>
-          <button
+        <div className="fixed inset-0 z-50 flex items-end">
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setLastOrderDismissed(true)}
-            aria-label="Cerrar"
-            className="flex-shrink-0 text-text-muted text-lg leading-none"
-          >
-            ×
-          </button>
+            aria-hidden="true"
+          />
+          <div className="relative w-full rounded-t-3xl bg-bg-surface border-t border-border px-5 pt-5 pb-8 flex flex-col gap-4">
+            <div className="flex items-start justify-between gap-3">
+              <h2 className="font-display text-xl font-extrabold tracking-tight text-text-primary leading-tight">
+                ¿Querés pedir<br />lo mismo que la última vez?
+              </h2>
+              <button
+                onClick={() => setLastOrderDismissed(true)}
+                aria-label="Cerrar"
+                className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-bg-elevated text-text-secondary text-xl font-bold"
+              >
+                ×
+              </button>
+            </div>
+
+            <ul className="flex flex-col gap-2">
+              {lastOrderItems.map((i) => (
+                <li key={i.id} className="flex items-center justify-between gap-2">
+                  <span className="text-sm text-text-primary">
+                    {i.cantidad > 1 && <span className="mr-1.5 font-bold text-brand-green">{i.cantidad}×</span>}
+                    {i.producto.nombre}
+                  </span>
+                  <span className="text-sm font-semibold text-text-secondary">
+                    {(i.producto.precio * i.cantidad).toFixed(2)}€
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            <button
+              onClick={handleRepeatOrder}
+              className="w-full rounded-2xl bg-brand-green py-4 text-base font-extrabold tracking-tight text-bg shadow-lg shadow-brand-green/30 active:scale-[0.98] transition-transform duration-150"
+            >
+              Sí, agregar al carrito
+            </button>
+          </div>
         </div>
       )}
 
