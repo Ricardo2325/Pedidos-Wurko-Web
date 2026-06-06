@@ -173,6 +173,15 @@ export default function Pedido() {
       {/* ── Header ─────────────────────────────────────────────────────── */}
       <header className="flex-shrink-0 border-b border-border bg-bg">
 
+        {/* Banner empresa cliente — solo cuando mostrar_nombre está activo */}
+        {!searchOpen && empresa.mostrar_nombre && (
+          <div className="flex items-center justify-center gap-2 border-b border-brand-blue/20 bg-brand-blue/10 px-4 py-1.5">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-brand-blue">
+              {empresa.nombre}
+            </span>
+          </div>
+        )}
+
         {/* Fila logo / nombre empresa */}
         {searchOpen ? (
           /* Modo búsqueda: reemplaza la fila de logo */
@@ -220,9 +229,11 @@ export default function Pedido() {
             <div className="flex-shrink-0 rounded-xl bg-white px-3 py-1.5 shadow shadow-black/10">
               <img src="/Logo_Wurko.png" alt="Wurko Padel" className="h-9 w-auto" draggable={false} />
             </div>
-            <p className="flex-1 truncate text-xs font-semibold text-text-secondary">
-              {empresa.nombre}
-            </p>
+            {!empresa.mostrar_nombre && (
+              <p className="flex-1 truncate text-xs font-semibold text-text-secondary">
+                {empresa.nombre}
+              </p>
+            )}
             {/* Botón búsqueda */}
             <button
               onClick={openSearch}

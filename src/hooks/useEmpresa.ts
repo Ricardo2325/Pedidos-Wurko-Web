@@ -23,7 +23,7 @@ export function useEmpresa(token: string | null): EmpresaState {
 
     supabase
       .from('empresas')
-      .select('id, nombre, token_acceso, envio_gratis, coste_envio, activa')
+      .select('id, nombre, token_acceso, envio_gratis, coste_envio, activa, mostrar_nombre')
       .eq('token_acceso', token)
       .single()
       .then(({ data, error }) => {

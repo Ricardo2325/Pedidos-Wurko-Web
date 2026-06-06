@@ -5,6 +5,7 @@ export interface Empresa {
   envio_gratis: boolean
   coste_envio: number
   activa: boolean
+  mostrar_nombre: boolean
 }
 
 export interface Producto {
