@@ -34,7 +34,7 @@ export default function Confirmacion() {
     return null
   }
 
-  const { nombre, codigoPedido, items, subtotal, costoEnvio, totalFinal, horaPedido, empresaNombre } = state
+  const { nombre, codigoPedido, items, totalFinal, horaPedido, empresaNombre } = state
 
   return (
     <div className="flex flex-col bg-bg" style={{ minHeight: '100dvh' }}>
